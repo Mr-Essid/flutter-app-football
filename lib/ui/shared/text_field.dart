@@ -1,114 +1,87 @@
 import 'package:flutter/material.dart';
+import 'package:project_flutter_football/utils/helperFunctions.dart';
 
-void main() {
-  runApp(MyApp());
+Widget passwordTextField(
+  TextEditingController textController,
+) {
+  bool isPasswordShown = false;
+
+  return TextFormField(
+    controller: textController,
+    decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        label: const Text("password"),
+        prefixIcon: const Icon(Icons.lock),
+        suffix: IconButton(
+            onPressed: () {
+              isPasswordShown = !isPasswordShown;
+            },
+            icon: Icon(
+                (isPasswordShown) ? Icons.visibility_off : Icons.visibility))),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class AppTextFieldPassword extends StatefulWidget {
+  TextEditingController textEditingController;
+  bool isPasswordShown = false;
+  AppTextFieldPassword({Key? key, required this.textEditingController})
+      : super(key: key);
+
+  @override
+  _TextFieldState createState() => _TextFieldState();
+}
+
+class _TextFieldState extends State<AppTextFieldPassword> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+    return TextFormField(
+      validator: passwordValidator,
+      obscureText: !widget.isPasswordShown,
+      controller: widget.textEditingController,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(28),
+          border: const OutlineInputBorder(),
+          label: const Text("password"),
+          prefixIcon: const Icon(Icons.lock),
+          suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  widget.isPasswordShown = !widget.isPasswordShown;
+                });
+              },
+              icon: Icon((widget.isPasswordShown)
+                  ? Icons.visibility_off
+                  : Icons.visibility))),
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
+class AppTextField extends StatefulWidget {
+  TextEditingController controller;
+  String? label;
+  String? hint;
+  Icon? icon;
+  String? Function(String?)? validator;
+
+  AppTextField(
+      {super.key, required this.controller, this.label, this.hint, this.icon, this.validator});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _AppTextFieldState createState() => _AppTextFieldState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>(); // To validate the form
-  final _usernameController = TextEditingController(); // Username controller
-  final _passwordController = TextEditingController(); // Password controller
-
-  // Function to handle login action
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      String username = _usernameController.text;
-      String password = _passwordController.text;
-      // Here you can handle the login action (e.g., send data to backend)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Logging in as $username')),
-      );
-    }
-  }
-
+class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey, // Attach form key for validation
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Username field
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your username';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-
-                  // Password field
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true, // Hide password text
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Login button
-                  ElevatedButton(
-                    onPressed: _login,
-                    child: const Text('Login'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize:
-                          Size(double.infinity, 50), // Full width button
-                    ),
-                  ),
-                  SizedBox(height: 16),
-
-                  // Sign-up link (optional)
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to signup page or do something else
-                    },
-                    child: Text('Don\'t have an account? Sign up'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    return TextFormField(
+        validator: widget.validator,
+        controller: widget.controller,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          hintText: widget.hint,
+          contentPadding: const EdgeInsets.all(28),
+          border: const OutlineInputBorder(),
+          prefixIcon: widget.icon,
+        ));
   }
 }

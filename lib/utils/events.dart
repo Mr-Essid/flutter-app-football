@@ -1,4 +1,5 @@
-sealed class Events<T> {}
+sealed class Events<T> {
+}
 
 class SuccessEvent<T> extends Events<T> {
   T data;
@@ -12,4 +13,4 @@ class ErrorEvent<T> extends Events<T> {
   ErrorEvent({required this.error, this.statusCode});
 }
 
-class LoadinEvent<T> extends Events<T> {}
+class LoadingEvent<T> extends Events<T> {}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:project_flutter_football/data/repository/user_repository.dart';
 import 'package:project_flutter_football/models/auth/signin_model.dart';
@@ -12,41 +14,40 @@ class SignInVM with ChangeNotifier {
   var passwordController = TextEditingController();
   var session = SesssionManagements();
 
+  var isLoading = false;
+
   UiState uiState = IdealState();
 
-  submitState(UiState state) {
-    uiState = state;
+  submitLoading(bool isLoading) {
+    this.isLoading = isLoading;
     notifyListeners();
   }
 
-  Stream<UiState> signInController() async* {
+  Future<UiState?> signInController() async {
     try {
       await for (var event in authentication(SignInModel(
           email: userNameController.text, password: passwordController.text))) {
         if (event is SuccessEvent<TokenModel>) {
-          print("Successfully logged in");
           token = event.data;
           await session.putToken(event.data);
-          yield NavigationState(navigationCallback: () {}, route: "/dashboard");
+          return NavigationState(navigationCallback: () {}, route: "/dashboard");
         } else if (event is ErrorEvent<TokenModel>) {
-          print("Error occurred during sign-in");
-          yield ErrorState(
-              error: "we have Sucessfully go",
-              onDismis: () {
-                submitState(IdealState());
-              });
-        } else if (event is LoadinEvent<TokenModel>) {
-          // yield LoadingState();
+          return ErrorState(error: event.error, onDismis: () {});
+        } else if (event is LoadingEvent<TokenModel>) {
+          submitLoading(true);
         } else {
           print("Same things went wrong");
         }
       }
     } catch (e) {
-      submitState(ErrorState(
-          error: e.toString(),
-          onDismis: () {
-            submitState(IdealState());
-          }));
+      // submitState(ErrorState(
+      //     error: e.toString(),
+      //     onDismis: () {
+      //       submitState(IdealState());
+      //     }));
+    } finally {
+      submitLoading(false);
     }
+    return null;
   }
 }

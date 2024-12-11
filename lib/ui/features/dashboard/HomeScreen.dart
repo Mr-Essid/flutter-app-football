@@ -1,12 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:project_flutter_football/constaints.dart';
-import 'package:project_flutter_football/ui/features/homeComponents/OwnMatchComponent.dart';
-import 'package:project_flutter_football/ui/view_model/match_view_model/HomeViewModel.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/dashboard_view_model/scaffold_dashbaord_vm.dart';
 import 'package:provider/provider.dart';
 
-import '../homeComponents/JoinedMatchComponent.dart';
+import 'homeComponents/JoinedMatchComponent.dart';
+import 'homeComponents/OwnMatchComponent.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

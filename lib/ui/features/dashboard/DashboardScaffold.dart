@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:project_flutter_football/ui/features/shared/ProfileScreen.dart';
-import 'package:project_flutter_football/ui/view_model/match_view_model/HomeViewModel.dart';
+import 'package:project_flutter_football/ui/view_model/dashboard_view_model/activites/ActivitesViewModel.dart';
+import 'package:project_flutter_football/ui/view_model/dashboard_view_model/activites/HomeViewModel.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/dashboard_view_model/scaffold_dashbaord_vm.dart';
-import 'package:project_flutter_football/ui/view_model/user_view_model/ActivitesViewModel.dart';
 import 'package:provider/provider.dart';
 
-import '../dashboard/ActivitiesScreen.dart';
-import '../dashboard/HomeScreen.dart';
+import 'ActivitiesScreen.dart';
+import 'HomeScreen.dart';
+import 'ProfileScreen.dart';
 
 
 class DashboardScaffoldScreen extends StatefulWidget {

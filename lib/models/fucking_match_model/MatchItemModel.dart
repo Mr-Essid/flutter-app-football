@@ -1,26 +1,28 @@
-class MatchModel {
-  final String id;
-  final DateTime date;
-  final String userId;
-  final Terrain terrain;
-  final List<Player> playersOfMatch;
+import 'package:project_flutter_football/models/model_protocol.dart';
 
-  MatchModel({
+class MatchItemActivities extends ModelProtocol {
+  String id;
+  DateTime date;
+  UserMatchItem user;
+  TerrainMachItem terrain;
+  List<PlayerMatchItem> playersOfMatch;
+
+  MatchItemActivities({
     required this.id,
     required this.date,
-    required this.userId,
+    required this.user,
     required this.terrain,
     required this.playersOfMatch,
   });
 
-  factory MatchModel.fromJson(Map<String, dynamic> json) {
-    return MatchModel(
+  factory MatchItemActivities.fromJson(Map<String, dynamic> json) {
+    return MatchItemActivities(
       id: json['_id'],
       date: DateTime.parse(json['date']),
-      userId: json['userId'],
-      terrain: Terrain.fromJson(json['terrainId']),
+      user: UserMatchItem.fromJson(json['userId']),
+      terrain: TerrainMachItem.fromJson(json['terrainId']),
       playersOfMatch: (json['playersOfMatch'] as List)
-          .map((player) => Player.fromJson(player))
+          .map((player) => PlayerMatchItem.fromJson(player))
           .toList(),
     );
   }
@@ -29,25 +31,61 @@ class MatchModel {
     return {
       '_id': id,
       'date': date.toIso8601String(),
-      'userId': userId,
+      'userId': user.toJson(),
       'terrainId': terrain.toJson(),
       'playersOfMatch': playersOfMatch.map((player) => player.toJson()).toList(),
     };
   }
 }
 
-class Terrain {
-  final String id;
-  final DateTime date;
-  final String label;
-  final String description;
-  final int width;
-  final int height;
-  final int price;
-  final String longitude;
-  final String latitude;
+class UserMatchItem {
+  String id;
+  String email;
+  String name;
+  String? phone;
+  String? lastName;
 
-  Terrain({
+  UserMatchItem({
+    required this.id,
+    required this.email,
+    required this.name,
+    this.phone,
+    this.lastName,
+  });
+
+  factory UserMatchItem.fromJson(Map<String, dynamic> json) {
+    return UserMatchItem(
+      id: json['_id'],
+      email: json['email'] ?? '',
+      name: json['name'],
+      phone: json['phone'],
+      lastName: json['last_name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'email': email,
+      'name': name,
+      'phone': phone,
+      'last_name': lastName,
+    };
+  }
+}
+
+class TerrainMachItem {
+  String id;
+  DateTime date;
+  String label;
+  String description;
+  String width;
+  String height;
+  String price;
+  String longitude;
+  String latitude;
+
+  TerrainMachItem({
     required this.id,
     required this.date,
     required this.label,
@@ -59,15 +97,15 @@ class Terrain {
     required this.latitude,
   });
 
-  factory Terrain.fromJson(Map<String, dynamic> json) {
-    return Terrain(
+  factory TerrainMachItem.fromJson(Map<String, dynamic> json) {
+    return TerrainMachItem(
       id: json['_id'],
       date: DateTime.parse(json['date']),
       label: json['label'],
       description: json['description'],
-      width: json['width'],
-      height: json['height'],
-      price: json['price'],
+      width: json['width'].toString(),
+      height: json['height'].toString(),
+      price: json['price'].toString(),
       longitude: json['longitude'],
       latitude: json['latitude'],
     );
@@ -88,22 +126,25 @@ class Terrain {
   }
 }
 
-class Player {
-  final String id;
-  final bool isAccepted;
-  final User user;
+class PlayerMatchItem extends ModelProtocol {
+  String id;
+  bool isAccepted;
+  UserMatchItem user;
+  String matchId;
 
-  Player({
+  PlayerMatchItem({
     required this.id,
     required this.isAccepted,
     required this.user,
+    required this.matchId,
   });
 
-  factory Player.fromJson(Map<String, dynamic> json) {
-    return Player(
+  factory PlayerMatchItem.fromJson(Map<String, dynamic> json) {
+    return PlayerMatchItem(
       id: json['_id'],
       isAccepted: json['isAccepted'],
-      user: User.fromJson(json['userId']),
+      user: UserMatchItem.fromJson(json['userId']),
+      matchId: json['matchId'],
     );
   }
 
@@ -112,38 +153,7 @@ class Player {
       '_id': id,
       'isAccepted': isAccepted,
       'userId': user.toJson(),
-    };
-  }
-}
-
-class User {
-  final String id;
-  final String email;
-  final String name;
-  final String? phone;
-
-  User({
-    required this.id,
-    required this.email,
-    required this.name,
-    this.phone,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['_id'],
-      email: json['email'],
-      name: json['name'],
-      phone: json['phone'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'email': email,
-      'name': name,
-      'phone': phone,
+      'matchId': matchId,
     };
   }
 }

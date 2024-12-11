@@ -2,6 +2,7 @@ import 'package:project_flutter_football/models/auth/token_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SesssionManagements {
+
   var sharedPreference = SharedPreferencesAsync();
   final tokenName = "TOKEN";
   final refrechToken = "RTOKEN";

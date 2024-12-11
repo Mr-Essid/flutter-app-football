@@ -1,9 +1,9 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:project_flutter_football/models/auth/token_model.dart';
-import 'package:project_flutter_football/ui/features/support_ui_status.dart';
-import 'package:project_flutter_football/ui/shared/alert.dart';
 import 'package:project_flutter_football/ui/shared/app_buttons.dart';
+import 'package:project_flutter_football/ui/shared/text_field.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/auth_view_model/signin_vm.dart';
 import 'package:project_flutter_football/utils/ui_state.dart';
 import 'package:provider/provider.dart';
@@ -13,125 +13,122 @@ class SigninScreen extends StatefulWidget {
   _SigninScreenState createState() => _SigninScreenState();
 }
 
-class _SigninScreenState extends State<SigninScreen> {
+class _SigninScreenState extends State<SigninScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>(); // To validate the form
 
   @override
-  Widget build(BuildContext outercontext) {
-    return ChangeNotifierProvider(
-      create: (context) => SignInVM(),
-      child: Scaffold(
-        body: Builder(
-          builder: (context) {
-            return Consumer<SignInVM>(
-              builder: (context, signInVM, child) {
-                return supportUiState(
-                  signInVM.uiState,
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text(
-                                "Sign In",
-                                style: TextStyle(
-                                  fontFamily: "Arial",
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 48),
-                              TextFormField(
-                                controller: signInVM.userNameController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Username',
-                                  border: OutlineInputBorder(),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your username';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                controller: signInVM.passwordController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Password',
-                                  border: OutlineInputBorder(),
-                                ),
-                                obscureText: true, // Hide password text
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your password';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              appPrimaryButton(context, "Sign in", () async {
-                                if (_formKey.currentState?.validate() ??
-                                    false) {
-                                  await for (var event
-                                      in signInVM.signInController()) {
-                                    if (event is SuccessState) {
-                                      showAboutDialog(
-                                          context: context,
-                                          children: [Text(event.message)]);
-                                    }
-                                    if (event is NavigationState) {
-                                      context.goNamed('dashboard');
-                                      event.navigationCallback();
-                                    }
-
-                                    if (event is ErrorState) {
-                                      showAboutDialog(
-                                          context: context,
-                                          children: [Text(event.error)]);
-                                    }
-
-                                    if (event is LoadingState) {
-                                      showAboutDialog(
-                                          context: context,
-                                          children: [
-                                            const SizedBox(
-                                              width: 100,
-                                              height: 100,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            )
-                                          ]);
-                                    }
-                                  }
-                                }
-                              }),
-                              const SizedBox(height: 8),
-                              appSecondaryButton(context, "Get Started", () {}),
-                              const SizedBox(height: 16),
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                    'Don\'t have an account? Sign up'),
-                              ),
-                            ],
+  Widget build(BuildContext context) {
+    var isLoadingState = context.watch<SignInVM>().isLoading;
+    var padding = MediaQuery.of(context).padding.top;
+    return Scaffold(
+        body: Padding(
+      padding: EdgeInsets.only(top: padding),
+      child: Stack(
+        children: [
+          if (isLoadingState) const LinearProgressIndicator(),
+          Container(
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    opacity: 0.1,
+                    image: AssetImage("assets/images/trophy.png"))),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          "assets/images/takwira.png",
+                          width: 140,
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        const Text(
+                          "Sign In",
+                          style: TextStyle(
+                            fontFamily: "Arial",
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
+
+                        const SizedBox(height: 48),
+                        AppTextField(
+                          controller:
+                              Provider.of<SignInVM>(context, listen: false)
+                                  .userNameController,
+                          label: "username",
+                          icon: const Icon(Icons.person),
+                        ),
+                        const SizedBox(height: 16),
+                        // password field
+                        AppTextFieldPassword(
+                            textEditingController:
+                                Provider.of<SignInVM>(context, listen: false)
+                                    .passwordController),
+                        const SizedBox(height: 20),
+                        appPrimaryButton(
+                          context,
+                          "Sign in",
+                          () async {
+                            final result = await Provider.of<SignInVM>(context,
+                                    listen: false)
+                                .signInController();
+                            if (result is NavigationState) {
+                              if (mounted) {
+                                context.go(result.route);
+                              }
+                            } else if (result is ErrorState) {
+                              if (mounted) {
+                                await showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => Center(
+                                            child: AlertDialog(
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  result.onDismis();
+                                                  context.pop();
+                                                },
+                                                child: const Text("OK"))
+                                          ],
+                                          title: const Text("Error"),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [Text(result.error)],
+                                          ),
+                                        )));
+                              }
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        appSecondaryButton(context, "Get Started", () {}),
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: () {
+                            context.go("/signup",);
+                          },
+                          child: const Text('Don\'t have an account? Sign up'),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-            );
-          },
-        ),
+                ),
+              ),
+            ),
+          ),
+          TextButton(onPressed: () {
+            context.goNamed("example");
+          }, child: const Text("show example")),
+        ],
       ),
-    );
+    ));
   }
 }

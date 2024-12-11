@@ -1,22 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:go_provider/go_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_flutter_football/ui/features/auth/signin_screen.dart';
-import 'package:project_flutter_football/ui/features/user/user_scaffold.dart';
+import 'package:project_flutter_football/ui/features/auth/signup_screen.dart';
+import 'package:project_flutter_football/ui/features/dashboard/DashboardScaffold.dart';
+import 'package:project_flutter_football/ui/features/match/AddMachScreen.dart';
+import 'package:project_flutter_football/ui/features/match/MatchScreen.dart';
+import 'package:project_flutter_football/ui/features/shared/ExampleScreen.dart';
+import 'package:project_flutter_football/ui/theme.dart';
+import 'package:project_flutter_football/ui/view_model/shared_view_model/AddMatchViewModel.dart';
+import 'package:project_flutter_football/ui/view_model/shared_view_model/MatchDetailsViewModel.dart';
+import 'package:project_flutter_football/ui/view_model/shared_view_model/auth_view_model/signin_vm.dart';
+import 'package:project_flutter_football/ui/view_model/shared_view_model/auth_view_model/signup_vm.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/dashboard_view_model/scaffold_dashbaord_vm.dart';
+import 'package:provider/provider.dart';
+final GoRouter routerConfig = GoRouter(
+    initialLocation: "/",
+    routes: [
+      // GoRoute(
+      //     name: "example",
+      //     path: "/example",
+      //     builder: (context, state) {
+      //       return AnimatedContentExample();
+      //     }),
 
-final GoRouter routerConfig = GoRouter(routes: [
-  GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return SigninScreen();
-      }),
-  GoRoute(
-      path: '/dashboard',
-      name: "dashboard",
-      builder: (BuildContext context, GoRouterState state) {
-        return UserScaffold();
-      })
-]);
+
+
+      GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) {
+            return ChangeNotifierProvider(
+              create: (context) => SignInVM(),
+              child: SigninScreen(),
+            );
+          }),
+
+
+      GoRoute(
+          path: "/signup",
+          builder: (context, state) {
+            return ChangeNotifierProvider(
+                create: (context) => SignUpVM(),
+              child: SignupScreen(),
+            );
+          }
+      ),
+
+
+      // GoProviderRoute(
+      //     path: "/user",
+      //     builder: (context, state) => const Text("Hello World"),
+      //     providers: [
+      //       ChangeNotifierProvider(
+      //         create: (block) => DashboardScaffoldViewModel(),
+      //       )
+      //     ],
+      //     routes: [
+      //       GoRoute(path: "/profile",
+      //           builder: (context, state) => ProfileScreen()
+      //       ),
+      //
+      //       GoRoute(path: "/settings",
+      //           builder: (context, state) => SettingsScreen()
+      //       )
+      //     ]
+      //
+      // ),
+      GoProviderRoute(
+        providers: [
+          ChangeNotifierProvider(create: (_) => DashboardScaffoldViewModel())
+        ],
+          path: '/dashboard',
+          name: "dashboard",
+          builder: (context, state) {
+            return DashboardScaffoldScreen();
+          },
+        routes: [
+          GoRoute(
+              name: "match-add",
+              path: "/match-add",
+              builder: (context, state) {
+                return ChangeNotifierProvider(create: (_) => AddMatchViewModel(),
+                  child: AddMatchScreen()
+                  ,);
+              }),
+          GoRoute(
+              name: "match-details",
+              path: "/match-details",
+              builder: (context, state) {
+                String matchId = state.extra as String;
+                return ChangeNotifierProvider(
+                    create: (_) => MatchDetailsViewModel(matchId),
+                    child: MatchScreen()
+                );
+              }),
+
+        ]
+          )
+    ]);
+
+
+extension GoRouterExtension on GoRouter{
+  void clearStackAndNavigate(String location){
+    while(canPop()){
+      pop();
+    }
+    pushReplacement(location);
+  }
+}
 
 void main() {
   runApp(const MainApp());
@@ -28,6 +119,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: customTheme,
       routerConfig: routerConfig,
     );
   }

@@ -7,45 +7,43 @@ import 'package:project_flutter_football/utils/ui_state.dart';
 
 class DashboardScaffoldViewModel with ChangeNotifier {
   User? user;
-  var session = SesssionManagements();
-
-  UiState uiState = IdealState();
+  int currentPageIndex = 0;
+  PageController pageController = PageController();
 
   DashboardScaffoldViewModel() {
     loadCurrentUserVM();
   }
 
-  submitState(UiState state) {
-    uiState = state;
+
+  changePage(int pageNumber) {
+    currentPageIndex = pageNumber;
+    pageController.animateToPage(pageNumber, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     notifyListeners();
   }
 
   loadCurrentUserVM() async {
     try {
-      final token = await session.getToken();
+      final token = await SesssionManagements().getToken();
 
       await for (var event in currentUser(token ?? "not authenticated")) {
         if (event is SuccessEvent<User>) {
+          print("we've go the user");
           user = event.data;
-          print(user!.email ?? "noemail");
           notifyListeners();
-          print("we got data successfully");
         } else if (event is ErrorEvent<User>) {
-          submitState(ErrorState(
-              error: event.error,
-              onDismis: () {
-                submitState(IdealState());
-              }));
-        } else if (event is LoadinEvent<User>) {
-          submitState(LoadingState());
+          print("There is Problem");
+        } else if (event is LoadingEvent<User>) {
+
         } else {}
       }
     } catch (e) {
-      submitState(ErrorState(
-          error: e.toString(),
-          onDismis: () {
-            submitState(IdealState());
-          }));
+      print(e.toString());
     }
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 }

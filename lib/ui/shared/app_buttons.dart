@@ -10,7 +10,7 @@ Widget appPrimaryButton(
         child: FilledButton(
       onPressed: callback,
       style: FilledButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
           fixedSize: const Size(double.infinity, 50),
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)))),
