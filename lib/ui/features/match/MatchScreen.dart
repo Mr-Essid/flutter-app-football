@@ -328,7 +328,7 @@ Widget _PersonMatch(String name, String id, bool isAccepted, Function() onAccept
               if(!isAccepted && isShowSuggestions)
               Row(children: [
                 IconButton(onPressed: onAccept, icon: const Icon(Icons.check),),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.clear))
+                IconButton(onPressed: onRefuse, icon: const Icon(Icons.clear))
               ],)
               else if(isAccepted)
                 Icon(Icons.check)

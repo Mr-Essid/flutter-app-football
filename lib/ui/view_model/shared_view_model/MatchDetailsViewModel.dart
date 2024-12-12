@@ -96,12 +96,11 @@ class MatchDetailsViewModel extends ChangeNotifier {
       await for (var event in refuseUser(requestId)) {
         if (event is SuccessEvent<RefuseModel>) {
           listPlayerItem?.removeWhere((e) => e.id == requestId);
+          notifyListeners();
           return SuccessState(message: "User Refused", onDismis: () {});
-
-
-        } else if (event is ErrorEvent<MatchParticipant>) {
+        } else if (event is ErrorEvent<RefuseModel>) {
           return ErrorState(error: event.error, onDismis:  (){uiStateMatchItem = IdealState();});
-        } else if (event is LoadingEvent<MatchParticipant>) {
+        } else if (event is LoadingEvent<RefuseModel>) {
         } else {}
       }
     } catch (e) {
