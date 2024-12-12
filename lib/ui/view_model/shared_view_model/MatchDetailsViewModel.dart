@@ -93,7 +93,7 @@ class MatchDetailsViewModel extends ChangeNotifier {
 
   Future<UiState<RefuseModel>?> refuseRequest(String requestId) async {
     try {
-      await for (var event in acceptUser(requestId)) {
+      await for (var event in refuseUser(requestId)) {
         if (event is SuccessEvent<RefuseModel>) {
           listPlayerItem?.removeWhere((e) => e.id == requestId);
           return SuccessState(message: "User Refused", onDismis: () {});

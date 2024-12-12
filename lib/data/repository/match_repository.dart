@@ -160,7 +160,7 @@ Stream<Events<RefuseModel>> refuseUser(String requestId) {
     ]);
 
     var url = Uri.http(BASE_URL, endpoint);
-    return httpI.put(url, headers: {"Authorization": "Bearer $pref"});
+    return httpI.delete(url, headers: {"Authorization": "Bearer $pref"});
 
   }, 200, RefuseModel.fromJson);
 
