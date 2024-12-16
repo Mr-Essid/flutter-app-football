@@ -32,7 +32,9 @@ class _DashboardScaffoldScreenState extends State<DashboardScaffoldScreen> {
     final user = context.watch<DashboardScaffoldViewModel>().user;
     final currentPage = context.watch<DashboardScaffoldViewModel>().currentPageIndex;
     final viewModel = Provider.of<DashboardScaffoldViewModel>(context, listen: false);
+
     var currentPageTitle = "";
+
     if(user != null) {
       switch(currentPage) {
         case 0: {currentPageTitle = "${user.name}'s Board";}

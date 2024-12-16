@@ -13,15 +13,18 @@ Stream<Events<T>> runRequest<T extends ModelProtocol>(
   yield LoadingEvent();
   try {
     var response = await apiCall();
-
+    print(response.statusCode);
     if (response.statusCode == successStatusCode) {
+
+      print(" from success response ${response.statusCode}");
       final mapResponse = jsonDecode(response.body);
 
       final data_ = RootModel.fromJson(mapResponse, fromJson);
       if (data_.status) {
+        print("from success response");
         yield SuccessEvent<T>(message: "Request successful", data: data_.data!);
       } else {
-
+        print("from inner Error");
         yield ErrorEvent(
             error: data_.errors?.join("\n") ?? "unexpected error just happened",
             statusCode: response.statusCode);

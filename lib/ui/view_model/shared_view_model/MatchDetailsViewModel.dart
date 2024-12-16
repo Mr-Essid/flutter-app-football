@@ -101,12 +101,14 @@ class MatchDetailsViewModel extends ChangeNotifier {
         } else if (event is ErrorEvent<RefuseModel>) {
           return ErrorState(error: event.error, onDismis:  (){uiStateMatchItem = IdealState();});
         } else if (event is LoadingEvent<RefuseModel>) {
+
         } else {}
       }
     } catch (e) {
       submitUiState(ErrorState(error: e.runtimeType.toString(), onDismis:  (){uiStateMatchItem = IdealState();}));
       rethrow;
     }
+    return null;
   }
 
 

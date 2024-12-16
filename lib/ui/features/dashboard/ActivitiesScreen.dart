@@ -31,11 +31,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         title: const Text("Activities"),
         actions: [
           IconButton(onPressed: () {
-
-
-
-
-          }, icon: Icon(Icons.dialpad_outlined))
+          }, icon: const Icon(Icons.dialpad_outlined))
         ],
 
 

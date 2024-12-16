@@ -18,6 +18,7 @@ dependencies:
   json_annotation: ^4.8.0
   shared_preferences: ^2.3.3
   go_provider: ^1.7.0
+  google_maps_flutter: ^2.10.0
 
 dev_dependencies:
   flutter_test:

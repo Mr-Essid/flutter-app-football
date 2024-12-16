@@ -165,6 +165,9 @@ Stream<Events<RefuseModel>> refuseUser(String requestId) {
 
   }, 200, RefuseModel.fromJson);
 
+
+
+
 }
 
 
@@ -188,4 +191,18 @@ Stream<Events<PlayerMatchItem>> joinMatchRequest(String requestId) {
 }
 
 
+Stream<Events<RefuseModel>> cancelRequest(String requestId) {
+  return runRequest<RefuseModel>(() async {
+    var endpoint = "/match-player/cancel/$requestId";
+
+    var pref = await SesssionManagements().getToken();
+
+    HttpWithMiddleware httpI = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    var url = Uri.http(BASE_URL, endpoint);
+    return httpI.put(url, headers: {"Authorization": "Bearer $pref"});
+  }, 200, RefuseModel.fromJson);
+}
 

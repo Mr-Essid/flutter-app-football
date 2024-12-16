@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:project_flutter_football/constaints.dart';
 import 'package:project_flutter_football/main.dart';
 import 'package:project_flutter_football/models/RefuseRequestModel.dart';
@@ -7,8 +8,12 @@ import 'package:project_flutter_football/models/fucking_match_model/MatchItemMod
 import 'package:project_flutter_football/ui/features/match/AcceptUserMatch.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/MatchDetailsViewModel.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/dashboard_view_model/scaffold_dashbaord_vm.dart';
+import 'package:project_flutter_football/utils/LatLngWapper.dart';
 import 'package:project_flutter_football/utils/ui_state.dart';
+import 'package:project_flutter_football/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 
 class MatchScreen extends StatelessWidget {
 
@@ -27,12 +32,15 @@ class MatchScreen extends StatelessWidget {
         title: const Text("Match"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.location_on),
-            onPressed: () {},
+            onPressed: () {
+             final extras = [LatLongWapper(longitude:  matchModel?.terrain.longitude ?? "32.3", latitude:  matchModel?.terrain.longitude ?? "10.3", id_: matchModel?.id ?? "not specified")];
+             context.pushNamed("terrainMaps", extra: extras);
+            },
           ),
         ],
       ),

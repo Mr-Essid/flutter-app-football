@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +9,9 @@ import 'package:project_flutter_football/main.dart';
 import 'package:project_flutter_football/models/fucking_match_model/MatchItemModel.dart';
 import 'package:project_flutter_football/models/fucking_match_model/OwnMatch.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/AddMatchViewModel.dart';
+import 'package:project_flutter_football/utils/LatLngWapper.dart';
 import 'package:project_flutter_football/utils/ui_state.dart';
+import 'package:project_flutter_football/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/terrain/TerrainModel.dart';
@@ -50,8 +53,7 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
           IconButton(
             onPressed: () async {
               final event = await Provider.of<AddMatchViewModel>(context, listen: false).createMatch();
-              print(event);
-              
+
               if(event is ErrorState<MatchItemActivities>) {
                 if (context.mounted) {
                   await showDialog(
@@ -75,7 +77,6 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
                           )));
                 }
               }
-
               if(event is SuccessState<MatchItemActivities>) {
                 if (context.mounted) {
                   await showDialog(
@@ -113,7 +114,20 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
           )
           ,
           IconButton(
-            onPressed: () {
+            onPressed: () async {
+              final listOfLatLong = listOfTerrains?.map((e) => LatLongWapper(latitude: e.latitude, longitude:  e.longitude, id_: e.id)).toList(growable: false);
+              // listOfLatLong null only when the listOfTerrains not returned at all
+              if(listOfLatLong != null) {
+                 final id_ = await context.pushNamed<String>("terrainMaps", extra: listOfLatLong);
+                  if (kDebugMode) {
+                    print("We've got id $id_");
+                  }
+                  if(id_ != null) {
+                    if(context.mounted) {
+                      Provider.of<AddMatchViewModel>(context, listen: false).updateSelectedIndex(listOfTerrains?.indexWhere((e) => e.id == id_) ?? 0);
+                    }
+                  }
+              }
             },
             icon: const Icon(Icons.language),
           ),
@@ -125,7 +139,7 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Date"),
+              const Text("Date"),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -147,8 +161,8 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
                   )
                 ],
               ),
-              SizedBox(height: 16),
-              Text("Time"),
+              const SizedBox(height: 16),
+              const Text("Time"),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

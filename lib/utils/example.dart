@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_flutter_football/ui/features/match/TerrainMap.dart';
 
 import '../ui/features/match/MatchComponent.dart';
 
@@ -39,7 +40,7 @@ class AnimatedBottomNavigationBarExample extends StatefulWidget {
 class _AnimatedBottomNavigationBarExampleState
     extends State<AnimatedBottomNavigationBarExample> {
   final PageController _pageController = PageController();
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,37 +48,7 @@ class _AnimatedBottomNavigationBarExampleState
       appBar: AppBar(
         title: const Text('Animated Bottom Navigation Bar'),
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        children: [
-          _buildAnimatedPage(Colors.red, 'Home'),
-          _buildAnimatedPage(Colors.blue, 'Search'),
-          _buildAnimatedPage(Colors.green, 'Profile'),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          _pageController.animateToPage(
-            index,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut, // Smooth animation curve
-          );
-          // setState(() {
-          //   _currentIndex = index;
-          // });
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+      body: const Text(""),
     );
   }
 
