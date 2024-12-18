@@ -1,3 +1,4 @@
+import 'package:project_flutter_football/models/fucking_match_model/OwnMatch.dart';
 import 'package:project_flutter_football/models/model_protocol.dart';
 
 class MatchItemActivities extends ModelProtocol {
@@ -7,6 +8,8 @@ class MatchItemActivities extends ModelProtocol {
   TerrainMachItem terrain;
   List<PlayerMatchItem> playersOfMatch;
 
+
+
   MatchItemActivities({
     required this.id,
     required this.date,
@@ -14,6 +17,22 @@ class MatchItemActivities extends ModelProtocol {
     required this.terrain,
     required this.playersOfMatch,
   });
+  MatchItemActivities copyWith({
+    String? id,
+    DateTime? date,
+    UserMatchItem? user,
+    TerrainMachItem? terrain,
+    List<PlayerMatchItem>? playersOfMatch,
+  }) {
+    return MatchItemActivities(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      user: user ?? this.user,
+      terrain: terrain ?? this.terrain,
+      playersOfMatch: playersOfMatch ?? this.playersOfMatch,
+    );
+  }
+
 
   factory MatchItemActivities.fromJson(Map<String, dynamic> json) {
     return MatchItemActivities(
@@ -25,6 +44,18 @@ class MatchItemActivities extends ModelProtocol {
           .map((player) => PlayerMatchItem.fromJson(player))
           .toList(),
     );
+  }
+
+
+  OwnMatchModel toOwnMatch() {
+   return OwnMatchModel(
+       id: id,
+       date: date,
+       userId: user.id,
+       terrain: OwnMatchModelTerrain(id: terrain.id, date: terrain.date, label: terrain.label, description: terrain.description, width: terrain.width, height: terrain.height, price: terrain.price, longitude: terrain.longitude, latitude: terrain.latitude),
+      playersOfMatch: playersOfMatch.map((e) => OwnMatchModelPlayer(id: e.id, isAccepted: e.isAccepted, user: OwnMatchModelUser(id: user.id, email: user.email, name: user.name))).toList(growable: true)
+
+   );
   }
 
   Map<String, dynamic> toJson() {

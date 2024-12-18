@@ -27,54 +27,53 @@ class _JoinedMatchComponentState extends State<JoinedMatchComponent> {
         bool isDismissed = false;
 
          return Dismissible(
+           key:UniqueKey(),
            onDismissed: (direction) async {
              final response = await Provider.of<HomeViewModel>(context, listen: false).cancelRequestX(listOfData[index].id);
-             print(response.runtimeType);
              if(response is ErrorState<RefuseModel>) {
-               if(context.mounted) {
-                 await showDialog(
-                     context: context,
-                     barrierDismissible: false,
-                     builder: (context) => Center(
-                         child: AlertDialog(
-                           actions: [
-                             TextButton(
-                                 onPressed: () {
-                                   context.pop();
-                                 },
-                                 child: const Text("OK"))
-                           ],
-                           title: const Text("Error"),
-                           content: Column(
-                             mainAxisSize: MainAxisSize.min,
-                             children: [Text(response.error)],
-                           ),
-                         )));
-               }
+                 if(context.mounted) {
+               showDialog(
+               context: context,
+               barrierDismissible: false,
+               builder: (context) => Center(
+                   child: AlertDialog(
+                     actions: [
+                       TextButton(
+                           onPressed: () {
+                             context.pop();
+                           },
+                           child: const Text("OK"))
+                     ],
+                     title: const Text("Error"),
+                     content: Column(
+                       mainAxisSize: MainAxisSize.min,
+                       children: [Text(response.error)],
+                     ),
+                   )));
              }
+           }
              else if(response == null) {
-               if(context.mounted) {
-                 await showDialog(
-                     context: context,
-                     barrierDismissible: false,
-                     builder: (context) => Center(
-                         child: AlertDialog(
-                           actions: [
-                             TextButton(
-                                 onPressed: () {
-                                   context.pop();
-                                 },
-                                 child: const Text("OK"))
-                           ],
-                           title: const Text("Error"),
-                           content: const Column(
-                             mainAxisSize: MainAxisSize.min,
-                             children: [Text("Sorry Same things went wrong")],
-                           ),
-                         )));
-               }
+               if(context.mounted) {showDialog(
+                   context: context,
+                   barrierDismissible: false,
+                   builder: (context) => Center(
+                       child: AlertDialog(
+                         actions: [
+                           TextButton(
+                               onPressed: () {
+                                 context.pop();
+                               },
+                               child: const Text("OK"))
+                         ],
+                         title: const Text("Error"),
+                         content: const Column(
+                           mainAxisSize: MainAxisSize.min,
+                           children: [Text("Sorry Same things went wrong")],
+                         ),
+                       )));
              }
-           },
+             }
+             },
              onUpdate: (dismissDetails) {
               if(dismissDetails.progress == 1.0)  {
                 isDismissed = true;
@@ -97,7 +96,6 @@ class _JoinedMatchComponentState extends State<JoinedMatchComponent> {
              dismissThresholds: const {
               DismissDirection.endToStart: 0.7
              },
-             key: Key(index.toString()),
              child: JoinedMatchComponentCard(joinedMatchModel: listOfData[index])
 
          );

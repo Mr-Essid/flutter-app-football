@@ -3,12 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SesssionManagements {
 
+
+
   var sharedPreference = SharedPreferencesAsync();
   final tokenName = "TOKEN";
   final refrechToken = "RTOKEN";
   Future<String?> getToken() async {
     return await sharedPreference.getString(tokenName);
   }
+
 
   Future<String?> getRefreshToken() async {
     return await sharedPreference.getString(refrechToken);

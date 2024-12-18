@@ -2,6 +2,9 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:project_flutter_football/models/match_model.dart';
+import 'package:project_flutter_football/ui/features/auth/signin_screen.dart';
+import 'package:project_flutter_football/ui/features/dashboard/ActivitiesScreen.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constaints.dart';
 
@@ -33,6 +36,7 @@ Widget _buildInfoColumn(
   );
 }
 class MatchUIRepresentation {
+  final String? index;
   final String date;
   final String labelOfTerrain;
   final bool isMine;
@@ -40,14 +44,14 @@ class MatchUIRepresentation {
   final String price;
   final Function() onClick;
 
-  MatchUIRepresentation({
+  MatchUIRepresentation(this.index,  {
     required this.date,
     required this.labelOfTerrain,
     required this.isMine,
     required this.playersCount,
     required this.price,
     required this.onClick
-  });
+  } );
 }
 
 
@@ -145,6 +149,7 @@ class MatchUIRepresentation {
 class MatchComponent extends StatefulWidget {
   final MatchUIRepresentation uiRepresentation;
 
+
   const MatchComponent({super.key, required this.uiRepresentation});
 
 
@@ -156,8 +161,6 @@ class MatchComponent extends StatefulWidget {
 class _MatchComponentState extends State<MatchComponent> {
   @override
   Widget build(BuildContext context) {
-
-
   return Card(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     elevation: 4,
@@ -180,7 +183,7 @@ class _MatchComponentState extends State<MatchComponent> {
                       widget.uiRepresentation.labelOfTerrain[0].toUpperCase() +
                           widget.uiRepresentation.labelOfTerrain.substring(1),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey,
+                        color: Colors.black.withAlpha(400),
                       ),
                     ),
                   ],

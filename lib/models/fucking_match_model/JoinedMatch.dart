@@ -1,4 +1,6 @@
-class JoinedMatchModel {
+import 'package:project_flutter_football/models/model_protocol.dart';
+
+class JoinedMatchModel extends ModelProtocol {
   final String id;
   final bool isAccepted;
   final String userId;

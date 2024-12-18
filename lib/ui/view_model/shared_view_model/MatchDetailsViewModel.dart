@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_flutter_football/ApplicationEventTrain.dart';
 import 'package:project_flutter_football/data/repository/match_repository.dart';
 import 'package:project_flutter_football/models/MatchRequestReponseModel.dart';
 import 'package:project_flutter_football/models/RefuseRequestModel.dart';
@@ -102,7 +103,7 @@ class MatchDetailsViewModel extends ChangeNotifier {
           return ErrorState(error: event.error, onDismis:  (){uiStateMatchItem = IdealState();});
         } else if (event is LoadingEvent<RefuseModel>) {
 
-        } else {}
+        }
       }
     } catch (e) {
       submitUiState(ErrorState(error: e.runtimeType.toString(), onDismis:  (){uiStateMatchItem = IdealState();}));
@@ -119,18 +120,20 @@ class MatchDetailsViewModel extends ChangeNotifier {
         if (event is SuccessEvent<PlayerMatchItem>) {
           listPlayerItem?.add(event.data);
           notifyListeners();
-          return SuccessState(message: "You've Joined Successfully", onDismis: () {});
+          eventBus.fire(BEvent(resource: {SimpleEventData.JOIN_MATCH_EVENT: event.data}, message: "joined match"));
+          return SuccessState(message: "You've Joined Successfully", onDismis: () { uiStateMatchItem = IdealState();});
 
         } else if (event is ErrorEvent<PlayerMatchItem>) {
 
           return ErrorState(error: event.error, onDismis:  (){uiStateMatchItem = IdealState();});
 
         } else if (event is LoadingEvent<MatchRequestResponseModel>) {
-        } else {}
+        }
       }
     } catch (e) {
       submitUiState(ErrorState(error: e.runtimeType.toString(), onDismis:  (){uiStateMatchItem = IdealState();}));
       rethrow;
     }
+    return null;
   }
 }

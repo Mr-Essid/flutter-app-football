@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_flutter_football/ApplicationEventTrain.dart';
 import 'package:project_flutter_football/data/repository/match_repository.dart';
 import 'package:project_flutter_football/models/fucking_match_model/AddMatchModel.dart';
 import 'package:project_flutter_football/models/fucking_match_model/MatchItemModel.dart';
@@ -102,6 +103,7 @@ class AddMatchViewModel extends ChangeNotifier {
           updateDate(null);
           updateSelectedIndex(-1);
           isLoading(false);
+          eventBus.fire(BEvent(resource: {SimpleEventData.ADD_MATCH_EVENT: event.data}, message: "match has been appended"));
           return SuccessState<MatchItemActivities>(message: "Match Added With Success State", onDismis: () {submitUiStateAddMatch(IdealState());});
         } else if (event is ErrorEvent<MatchItemActivities>) {
           isLoading(false);
@@ -114,8 +116,6 @@ class AddMatchViewModel extends ChangeNotifier {
      isLoading(false);
     }
   }
-
-
 
 
 }

@@ -42,13 +42,7 @@ class _DashboardScaffoldScreenState extends State<DashboardScaffoldScreen> {
         case 2: {currentPageTitle = "Profile";}
       }
     }
-    return (user != null) ? MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => HomeViewModel()),
-        ChangeNotifierProvider(create: (_) => ActivitiesViewModel())
-
-      ],
-      child: Scaffold(
+    return Scaffold(
         body: PageView(
           controller: viewModel.pageController,
           onPageChanged: (index) {
@@ -65,7 +59,6 @@ class _DashboardScaffoldScreenState extends State<DashboardScaffoldScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.sports_soccer), label: 'Activities'),
           BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined), label: 'Profile', activeIcon: Icon(Icons.person)),
         ]),
-      ),
-    ) : Container(color: Colors.white, child: const Center( child:  CircularProgressIndicator()),);
+      );
   }
 }

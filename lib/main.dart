@@ -6,10 +6,15 @@ import 'package:project_flutter_football/ui/features/auth/signin_screen.dart';
 import 'package:project_flutter_football/ui/features/auth/signup_screen.dart';
 import 'package:project_flutter_football/ui/features/dashboard/DashboardScaffold.dart';
 import 'package:project_flutter_football/ui/features/match/AddMachScreen.dart';
+import 'package:project_flutter_football/ui/features/match/ChatRoomComponent.dart';
 import 'package:project_flutter_football/ui/features/match/MatchScreen.dart';
 import 'package:project_flutter_football/ui/features/match/TerrainMap.dart';
+import 'package:project_flutter_football/ui/features/shared/ErrorStateComponent.dart';
 import 'package:project_flutter_football/ui/features/shared/ExampleScreen.dart';
 import 'package:project_flutter_football/ui/theme.dart';
+import 'package:project_flutter_football/ui/view_model/ChatSystemViewModel.dart';
+import 'package:project_flutter_football/ui/view_model/dashboard_view_model/activites/ActivitesViewModel.dart';
+import 'package:project_flutter_football/ui/view_model/dashboard_view_model/activites/HomeViewModel.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/AddMatchViewModel.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/MatchDetailsViewModel.dart';
 import 'package:project_flutter_football/ui/view_model/shared_view_model/auth_view_model/signin_vm.dart';
@@ -27,7 +32,7 @@ final GoRouter routerConfig = GoRouter(
           path: "/example",
           builder: (context, state) {
             final list = state.extra as List<LatLongWapper>?;
-            return TerrainMap(listOfLatLong: list ?? List.empty(growable: false));
+            return ErrorStateComponent(message: "Problem With X Y", onRetry: (){},);
           }),
       GoRoute(
           name: "terrainMaps",
@@ -79,7 +84,9 @@ final GoRouter routerConfig = GoRouter(
       // ),
       GoProviderRoute(
         providers: [
-          ChangeNotifierProvider(create: (_) => DashboardScaffoldViewModel())
+          ChangeNotifierProvider(create: (_) => DashboardScaffoldViewModel()),
+          ChangeNotifierProvider(create: (_) => HomeViewModel()),
+          ChangeNotifierProvider(create: (_) => ActivitiesViewModel())
         ],
           path: '/dashboard',
           name: "dashboard",
@@ -106,8 +113,18 @@ final GoRouter routerConfig = GoRouter(
                 );
               }),
 
+          GoRoute(
+              name: "go-chat",
+              path: "/go-chat",
+              builder: (context, state) {
+                String matchId = state.extra as String;
+                return ChangeNotifierProvider(
+                    create: (_) => ChatSystemViewModel(roomId: matchId),
+                    child: const ChatRoomComponent()
+                );
+              }),
         ]
-          )
+      )
     ]
 );
 

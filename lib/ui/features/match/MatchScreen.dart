@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:project_flutter_football/constaints.dart';
-import 'package:project_flutter_football/main.dart';
 import 'package:project_flutter_football/models/RefuseRequestModel.dart';
 import 'package:project_flutter_football/models/fucking_match_model/MatchItemModel.dart';
 import 'package:project_flutter_football/ui/features/match/AcceptUserMatch.dart';
@@ -10,23 +11,20 @@ import 'package:project_flutter_football/ui/view_model/shared_view_model/MatchDe
 import 'package:project_flutter_football/ui/view_model/shared_view_model/dashboard_view_model/scaffold_dashbaord_vm.dart';
 import 'package:project_flutter_football/utils/LatLngWapper.dart';
 import 'package:project_flutter_football/utils/ui_state.dart';
-import 'package:project_flutter_football/utils/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
-
+import 'package:share_plus/share_plus.dart';
 
 class MatchScreen extends StatelessWidget {
 
   const MatchScreen({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
+
     final matchModel = context.watch<MatchDetailsViewModel>().matchItemActivities;
     final listOfPlayers = context.watch<MatchDetailsViewModel>().listPlayerItem;
-    final matchLoadState = context.read<MatchDetailsViewModel>().uiStateMatchItem;
     final user = context.read<DashboardScaffoldViewModel>().user!;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Match"),
@@ -40,6 +38,14 @@ class MatchScreen extends StatelessWidget {
             onPressed: () {
              final extras = [LatLongWapper(longitude:  matchModel?.terrain.longitude ?? "32.3", latitude:  matchModel?.terrain.longitude ?? "10.3", id_: matchModel?.id ?? "not specified")];
              context.pushNamed("terrainMaps", extra: extras);
+            },
+          ),
+          if(user.isOwnResource(matchModel?.user.id ?? "") || matchModel?.playersOfMatch.any((e) => e.id == user.id) == true)
+          IconButton(
+            icon: const Icon(Icons.chat_outlined),
+            onPressed: () {
+              final extras = matchModel!.id;
+              context.pushNamed("go-chat", extra: extras);
             },
           ),
         ],
@@ -112,12 +118,48 @@ class MatchScreen extends StatelessWidget {
               ),
               Row(
                mainAxisAlignment: MainAxisAlignment.center,
+               crossAxisAlignment: CrossAxisAlignment.center,
                children: [
-                const Icon(Icons.share, size: 16, color: Colors.grey,),
+                 if(Platform.isAndroid || Platform.isIOS)
+                 SizedBox(
+                   width: 24,
+                   height: 24,
+                   child: IconButton(
+                     onPressed: () async {
+                       final result = await Share.share("Hi there, your friend ${user.name} with email ${user.email} invited you to join match with id:\n ${matchModel.id}_");
+                       if(result.status == ShareResultStatus.success) {
+                         print("share made with success status");
+                       }
+                   },
+                     icon: const Icon(Icons.share, size: 16, color: Colors.grey,),
+                     padding: const EdgeInsets.all(4),
+                   ),
+                 ),
                  const SizedBox(width: 4,),
-                 const Icon(Icons.copy, size: 16, color: Colors.grey,),
+
+                 SizedBox(
+                   width: 24,
+                   height: 24,
+                   child: IconButton(onPressed: () {
+                     {
+                       Clipboard.setData(ClipboardData(text: matchModel.id)).then((_) {
+                         if(context.mounted) {
+                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("id of match copied")));
+                         }
+                       }
+                       );
+                     }
+
+                   },
+                       icon: const Icon(Icons.copy, size: 16, color: Colors.grey,),
+
+                     padding: EdgeInsets.all(4),
+                   ),
+                 ),
+
+
                  const SizedBox(width: 4,),
-                 Text("Id: ${matchModel.id}", style: const TextStyle(color: Colors.grey),) // id
+                 Text("Id: ${matchModel.id}", style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey)) // id
                ],
              ),
             const SizedBox(height: 32,),
@@ -166,6 +208,7 @@ class MatchScreen extends StatelessWidget {
                         ...(listOfPlayers.map((e) {
                           return _PersonMatch(e.user.name.capitalize(), e.user.id, e.isAccepted, () async {
                              final response = await  Provider.of<MatchDetailsViewModel>(context, listen: false).acceptUserX(e.id);
+
                              if(response is ErrorState<MatchParticipant>) {
                                if (context.mounted) {
                                  await showDialog(
@@ -213,7 +256,6 @@ class MatchScreen extends StatelessWidget {
                                          )));
                                }
                              }
-
                           }, () async {
                             final response = await  Provider.of<MatchDetailsViewModel>(context, listen: false).refuseRequest(e.id);
                             if(response is ErrorState<RefuseModel>) {
@@ -236,7 +278,9 @@ class MatchScreen extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [Text(response.error)],
                                           ),
-                                        )));
+                                        )
+                                    )
+                                );
                               }
                             }
 
